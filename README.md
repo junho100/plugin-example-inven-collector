@@ -40,7 +40,7 @@ spaceone run plugin-server plugin -m src
 
 ```angular2html
 pip3 install spacectl
-spacectl config init -f test/local.yaml
+spacectl config init -f test/local.yml
 ```
 <br>
 <br>
