@@ -9,6 +9,10 @@ app = CollectorPluginServer()
 def collector_init(params: dict) -> dict:
     return {"metadata": {"options_schema": {}}}
 
+@app.route("Collector.verify")
+def collector_verify(params: dict) -> None:
+    # Verify connector using secret
+    pass
 
 @app.route("Collector.collect")
 def collector_collect(params: dict) -> Generator[dict, None, None]:
