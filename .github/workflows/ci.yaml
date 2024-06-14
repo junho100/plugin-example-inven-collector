@@ -28,4 +28,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: bemodesty306/plugin-example-inven-collector:${{ github.sha }}
+          tags: bemodesty306/plugin-example-inven-collector:${{ github.sha }},bemodesty306/plugin-example-inven-collector:latest
