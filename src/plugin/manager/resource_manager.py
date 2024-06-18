@@ -13,7 +13,7 @@ class ResourceManager(BaseManager):
         # TODO: Change the following variables to match the actual resource group and type
         self.cloud_service_group = "ResourceGroup-A"
         self.cloud_service_type = "Resource-A"
-        self.provider = "example_provider"
+        self.provider = "example"
         self.metadata_path = "metadata/resource/resource.yaml"
 
     def collect_resources(self, options, secret_data, schema):
@@ -48,12 +48,18 @@ class ResourceManager(BaseManager):
         resource_connector = ResourceConnector()
         resources = resource_connector.list_servers()
         for resource in resources["servers_info"]:
+            reference = {
+                    "resource_id": resource.get("id"),
+                    "external_link": "https://github.com/cloudforet-io/plugin-example-inven-collector"
+                    }
             cloud_service = make_cloud_service(
                 name=resource["name"],
                 cloud_service_type=self.cloud_service_type,
                 cloud_service_group=self.cloud_service_group,
                 provider=self.provider,
                 data=resource,
+                account=secret_data.get("account_id",None),
+                reference=reference,
             )
             yield make_response(
                 cloud_service=cloud_service,
