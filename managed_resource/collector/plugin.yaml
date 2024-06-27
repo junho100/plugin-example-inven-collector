@@ -1,0 +1,9 @@
+---
+name: Example Collector
+service_type: inventory.Collector
+image: bemodesty306/plugin-example-inven-collector
+capability: {}
+tags:
+  icon: https://raw.githubusercontent.com/cloudforet-io/artwork/main/logo/symbol/Cloudforet_symbol--dark-navy.png
+template: {}
+provider: example
