@@ -46,8 +46,9 @@ class ResourceManager(BaseManager):
 
     def _collect_cloud_service(self, options, secret_data, schema):
         resource_connector = ResourceConnector()
-        resources = resource_connector.list_servers()
-        for resource in resources["servers_info"]:
+        token, tenantId = resource_connector.get_token(secret_data)
+        resources = resource_connector.list_servers(token, tenantId)
+        for resource in resources["servers"]:
             reference = {
                     "resource_id": resource.get("id"),
                     "external_link": "https://github.com/cloudforet-io/plugin-example-inven-collector"
@@ -58,10 +59,12 @@ class ResourceManager(BaseManager):
                 cloud_service_group=self.cloud_service_group,
                 provider=self.provider,
                 data=resource,
-                account=secret_data.get("account_id",None),
+                account=tenantId,
                 reference=reference,
             )
+            print(resource["name"])
             yield make_response(
                 cloud_service=cloud_service,
                 match_keys=[["name", "reference.resource_id", "account", "provider"]],
             )
+

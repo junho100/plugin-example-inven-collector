@@ -1,5 +1,7 @@
+import json
 import logging
 from spaceone.core.connector import BaseConnector
+import requests
 
 _LOGGER = logging.getLogger("cloudforet")
 
@@ -10,16 +12,25 @@ class ResourceConnector(BaseConnector):
         super().__init__(*args, **kwargs)
 
     @staticmethod
-    def list_servers() -> dict:
-        return {
-            'servers_info': [
-                {
-                    'id': 'vm-01', 'name': 'ubuntu-server-01', 'ip': '192.168.1.1', 'state': 'running',
-                    'account_id': '1234567890', 'created_at': '2024-06-14 08:30:14'
-                },
-                {
-                    'id': 'vm-02', 'name': 'windows-test-vm', 'ip': '10.1.2.3', 'state': 'stopped',
-                    'account_id': '1234567890', 'created_at': '2020-06-15 09:30:34'
+    def list_servers(token, tenantId) -> dict:
+        response = requests.get(f"https://kr1-api-instance-infrastructure.nhncloudservice.com/v2/{tenantId}/servers", headers={
+            "Content-Type": "application/json",
+            "X-Auth-Token": token
+        })
+        return response.json()
+
+    def get_token(self, secret_data):
+        response = requests.post("https://api-identity-infrastructure.nhncloudservice.com/v2.0/tokens", json={
+            "auth": {
+                "tenantId": secret_data["tenant_id"],
+                "passwordCredentials": {
+                    "username": secret_data["client_id"],
+                    "password": secret_data["client_secret"]
                 }
-            ]
-        }
+            }
+        }, headers={"Content-Type": "application/json"})
+
+        if response.status_code == 200:
+            return response.json()["access"]["token"]["id"], secret_data["tenant_id"]
+        else:
+            raise Exception(f"Failed to get token. {response.json()}")
